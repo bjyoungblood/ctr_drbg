@@ -31,6 +31,7 @@ defmodule CtrDrbg.MixProject do
   defp deps do
     [
       {:benchee, "~> 1.0", only: [:dev, :test]},
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.3", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.30", only: :dev, runtime: false}
     ]

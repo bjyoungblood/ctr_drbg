@@ -194,15 +194,7 @@ defmodule CtrDrbgTest do
         |> Enum.map(fn param_line ->
           [_match, key, value] = Regex.run(~r/\[([A-Za-z0-9]+) = ([A-Za-z0-9]+)\]/i, param_line)
 
-          value =
-            cond do
-              value == "True" -> true
-              value == "False" -> false
-              value =~ ~r/^\d+$/ -> String.to_integer(value)
-              true -> raise "unhandled algorithm parameter value for #{key}: #{inspect(value)}"
-            end
-
-          {key, value}
+          {key, parse_algorithm_param_value(value)}
         end)
         |> Enum.into(%{})
 
@@ -235,6 +227,16 @@ defmodule CtrDrbgTest do
       %{params: params, cases: cases}
     end)
     |> Enum.into([])
+  end
+
+  defp parse_algorithm_param_value("True"), do: true
+  defp parse_algorithm_param_value("False"), do: false
+
+  defp parse_algorithm_param_value(v) do
+    case Integer.parse(v) do
+      {int, ""} -> int
+      _ -> raise "unhandled algorithm parameter value: #{inspect(v)}"
+    end
   end
 
   defp hex_to_raw(""), do: ""
